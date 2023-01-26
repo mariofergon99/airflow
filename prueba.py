@@ -4,6 +4,9 @@ from airflow.operators.python import PythonOperator
 
 from datetime import datetime, timedelta
 
+def dummy():
+    print("yes")
+
 default_args = {
     "owner": "airflow",
     "email_on_failure": False,
@@ -25,7 +28,7 @@ with DAG("prueba", start_date=datetime(2021, 1 ,1),
 
     prueba_python = PythonOperator(
         task_id="downloading_rates",
-        python_callable=print('prueba')
+        python_callable=dummy
     )
 
     prueba_spark >> prueba_python
