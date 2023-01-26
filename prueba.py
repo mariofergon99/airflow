@@ -21,7 +21,7 @@ with DAG("prueba", start_date=datetime(2021, 1 ,1),
     
     prueba_spark = SparkSubmitOperator(
             task_id="prueba",
-            application="opt/bitnami/spark/examples/src/main/python/pi.py",
+            application="/home/airflow/.local/lib/python3.7/site-packages/pyspark/examples/src/main/python",
             conn_id="spark_conn",
             verbose=False
         )
