@@ -17,7 +17,7 @@ default_args = {
     "retry_delay": timedelta(minutes=5)
 }
 
-with DAG("prueba", start_date=datetime(2021, 1 ,1), 
+with DAG("prueba_Bash", start_date=datetime(2021, 1 ,1), 
     schedule_interval="@daily", default_args=default_args, catchup=False) as dag:
     
     # prueba_spark = SparkSubmitOperator(
