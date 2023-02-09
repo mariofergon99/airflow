@@ -77,7 +77,7 @@ default_args = {                                                                
 
 with DAG(dag_id='Simulador_mysql', start_date=datetime(2021, 1 ,1), schedule_interval=cf['airflow']['schedule_interval'], default_args=default_args, description='Simulación de datos mysql', tags=['mysql', 'kafka', 'spark'], catchup=False) as dag:
     mySQL_to_Kafka_DAG = PythonOperator(
-        task_id="mySQL to Kafka",
+        task_id="mySQL_to_Kafka",
         python_callable=mySQL_writer,
         op_args=[cf]
     )
