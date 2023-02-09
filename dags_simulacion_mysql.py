@@ -23,7 +23,9 @@ def mySQL_writer(cf):
     
     ## Escritura en MySQL ## 
     # - Conexion a la base de datos
-    mysql_db_conn = mysql.connector.connect(                                      ## <-----
+    print(cf)
+    print(type(cf))
+    mysql_db_conn = mysql.connector.connect(
         user = cf['mySQL']['user'], 
         database = cf['mySQL']['database'],
         password = cf['mySQL']['password'],
