@@ -7,10 +7,10 @@ import yaml
 bucket = 'config'
 key = 'config_dagsSimulacion.yaml'
 s3_client = boto3.client('s3', 
-                aws_access_key_id = 'inditedge',            #<------ Ponerlo como secreto
-                aws_secret_access_key = 'inditedge', 
-                endpoint_url = 'minio.default.svc:9000', 
-                region_name = 'eu-south-2')
+    aws_access_key_id = 'inditedge',            #<------ Ponerlo como secreto
+    aws_secret_access_key = 'inditedge', 
+    endpoint_url = 'http://minio.default.svc:9000', 
+    region_name = 'eu-south-2')
 
 obj = s3_client.get_object(Bucket=bucket, Key=key)
 cf = yaml.safe_load(obj['Body'].read())
