@@ -18,6 +18,7 @@ cf = yaml.safe_load(obj['Body'].read())
 def mySQL_writer(cf):
     from datetime import datetime
     from random import randint, choice
+    import pandas as pd
     import mysql.connector
     import string
     
@@ -35,6 +36,10 @@ def mySQL_writer(cf):
 
     # - Crear la tabla si no existe
     cursor.execute("CREATE TABLE IF NOT EXISTS monitoring_system_events (ID BIGINT(20), VERSION_OPTLOCK INT(11), DATE_INS TIMESTAMP, DATE_MODIF DATETIME, ACK_DATE DATETIME, USER_ACK VARCHAR(255), ALARM_DATE DATETIME, COMMON_NETWORK_COMPONENT_ID BIGINT(20), NETWORK_ELEMENT VARCHAR(150), NETWORK_ELEMENT_NOTE VARCHAR(255), STATION VARCHAR(255), DURATION BIGINT(20), ORIGINAL_EVENT_ID BIGINT(20), ALARM_TYPE_ID BIGINT(20), UNKNOWN_EQUIPMENT_TRAP_TEMPLATE_ID BIGINT(20), EVENT_TYPE_ID BIGINT(20), SEVERITY_ID BIGINT(20), SIMBOL_ID BIGINT(20), TRAP_ID BIGINT(20), ALARM_SOURCES VARCHAR(255), TICKET VARCHAR(200), DESCRIPTION VARCHAR(500), SYSLOG_FACILITY_CODE_ID BIGINT(20), PROTOCOL_GROUP BIGINT(20), PRIMARY KEY(ID))")
+    
+    id_pd = pd.read_sql("SELECT ID FROM monitoring_system_events ORDER BY DESC LIMIT 1", con=mysql_db_conn)
+    print(id_pd)
+    
     for i in range(cf['airflow']['max_rows']):
         # - Realizar la escritura
         sql = "INSERT INTO monitoring_system_events (ID, VERSION_OPTLOCK, DATE_INS, DATE_MODIF, ACK_DATE, USER_ACK, ALARM_DATE, COMMON_NETWORK_COMPONENT_ID, NETWORK_ELEMENT, NETWORK_ELEMENT_NOTE, STATION, DURATION, ORIGINAL_EVENT_ID, ALARM_TYPE_ID, UNKNOWN_EQUIPMENT_TRAP_TEMPLATE_ID, EVENT_TYPE_ID, SEVERITY_ID, SIMBOL_ID, TRAP_ID, ALARM_SOURCES, TICKET, DESCRIPTION, SYSLOG_FACILITY_CODE_ID, PROTOCOL_GROUP) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -66,6 +71,7 @@ def mySQL_writer(cf):
         cursor.execute(sql, val)
 
         mysql_db_conn.commit()
+    mysql_db_conn.close()
     
 default_args = {
     "owner": cf['airflow']['owner'],
