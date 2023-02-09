@@ -68,7 +68,7 @@ def mySQL_writer(cf):
 
         mysql_db_conn.commit()
     
-default_args = {                                                                   ## <-----
+default_args = {
     "owner": cf['airflow']['owner'],
     "email_on_failure": cf['airflow']['email_on_failure'],
     "email_on_retry": cf['airflow']['email_on_retry'],
