@@ -27,10 +27,6 @@ cf = yaml.safe_load(obj['Body'].read())
 #   - Configuracion producer
 #   - Spark Operator args para Hudi Streaming
 
-cf_path = 's3a://bucket-config/config_dagsMigracion.yaml'
-with open(cf_path, 'r') as file:  ## <----- 
-    cf = yaml.safe_load(file)
-
 default_args = {                                                                   ## <-----
     "owner": cf['airflow']['owner'],
     "email_on_failure": cf['airflow']['email_on_failure'],
@@ -77,21 +73,22 @@ def mySQL_to_Kafka(cf):
     
     ## Escritura a Kafka ##
     # - Enviar datos con producer -> 1 a 1 o todo de golpe?
-    producer.send(cf['kafka']['write-topic'], value = data_mysql_json)
+    for event_data in data_mysql_json:
+        producer.send(cf['kafka']['write-topic'], value = event_data)
 
     # mysql_db_conn.close()
 
 with DAG(dag_id='Migracion_inicial', start_date=datetime(2021, 1 ,1), schedule_interval=cf['airflow']['schedule_interval'], default_args=default_args, description='Migracion inicial de datos históricos', tags=['mysql', 'kafka', 'spark'], catchup=False) as dag:
     
     mySQL_to_Kafka_DAG = PythonOperator(
-        task_id="mySQL to Kafka",
+        task_id="mySQL_to_Kafka",
         python_callable=mySQL_to_Kafka,
         op_args=[cf]
     )
 
     Kafka_to_Iceberg_DAG = SparkSubmitOperator(
-        task_id="Kafka to Iceberg",
-        application="kafkaToIceberg.py",    # <----
+        task_id="Kafka_to_Iceberg",
+        application="/opt/airflow/dags/code/kafkaToIceberg.py",    # <----
         conn_id="spark_conn",
         verbose=False,
         packages= 'org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:1.1.0, org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0', #
